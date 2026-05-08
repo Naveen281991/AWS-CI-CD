@@ -1,42 +1,50 @@
 version: 0.2
 
+env:
+  variables:
+    AWS_DEFAULT_REGION: us-east-1
+    REPOSITORY_URI: 407036964001.dkr.ecr.us-east-1.amazonaws.com/cicd-repo-01
+    IMAGE_TAG: latest
+
 phases:
 
   install:
     runtime-versions:
       java: corretto17
-    commands:
-      - echo Installing dependencies
 
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws --version
 
-      - REPOSITORY_URI=407036964001.dkr.ecr.us-east-1.amazonaws.com/cicd-repo-01
-
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 407036964001.dkr.ecr.us-east-1.amazonaws.com
-
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-
-      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 407036964001.dkr.ecr.us-east-1.amazonaws.com
 
   build:
     commands:
-      - echo Build started
+      - echo Build started...
+
       - mvn clean install
 
       - echo Building Docker image...
-      - docker build -t cicdtestregistry .
 
-      - docker tag cicdtestregistry:latest $REPOSITORY_URI:$IMAGE_TAG
+      - docker build -t cicd-repo-01 .
+
+      - echo Listing Docker images...
+
+      - docker images
+
+      - echo Tagging Docker image...
+
+      - docker tag cicd-repo-01:latest $REPOSITORY_URI:$IMAGE_TAG
+
+      - docker images
 
   post_build:
     commands:
-      - echo Build completed
       - echo Pushing Docker image...
 
       - docker push $REPOSITORY_URI:$IMAGE_TAG
+
+      - echo Build completed successfully
 
 artifacts:
   files:
