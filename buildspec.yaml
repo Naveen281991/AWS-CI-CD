@@ -14,7 +14,7 @@ phases:
 
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR...
+      - echo Logging into Amazon ECR...
 
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 407036964001.dkr.ecr.us-east-1.amazonaws.com
 
@@ -24,16 +24,13 @@ phases:
 
       - mvn clean install
 
-      - echo Building Docker image...
+      - echo Checking generated JAR...
+      - ls -la target/
 
+      - echo Building Docker image...
       - docker build -t cicd-repo-01 .
 
-      - echo Listing Docker images...
-
-      - docker images
-
       - echo Tagging Docker image...
-
       - docker tag cicd-repo-01:latest $REPOSITORY_URI:$IMAGE_TAG
 
       - docker images
