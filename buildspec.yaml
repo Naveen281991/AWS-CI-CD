@@ -7,9 +7,10 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws --version
       - REPOSITORY_URI=407036964001.dkr.ecr.us-east-1.amazonaws.com/cicdtestregistry
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - aws ecr get-login-password --region us-east-1 | docker login --username Naveen --password-Nav@281991 $REPOSITORY_URI
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+       - echo Installing dependencies
   build:
     commands:
       - echo Build started on `date`
@@ -31,9 +32,11 @@ phases:
       - echo $DOCKER_CONTAINER_NAME
       - echo printing imagedefinitions.json
       - cat imagedefinitions.json
+       - echo Build completed
 
 artifacts:
   files:
     - imagedefinitions.json
     - target/course-service.jar
+     - target/*.jar
 
