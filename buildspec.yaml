@@ -13,7 +13,7 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws --version
 
-      - REPOSITORY_URI=407036964001.dkr.ecr.us-east-1.amazonaws.com/cicdtestregistry
+      - REPOSITORY_URI= 407036964001.dkr.ecr.us-east-1.amazonaws.com/cicd-repo-01
 
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 407036964001.dkr.ecr.us-east-1.amazonaws.com
 
